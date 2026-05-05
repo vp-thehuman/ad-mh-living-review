@@ -64,6 +64,21 @@ Protocol registered on PROSPERO (registration # pending — see `protocol/PROSPE
 
 If you use this work, please cite the protocol DOI (issued on PROSPERO acceptance) and this repository.
 
+## Pushing to GitHub
+
+This repo is initialised on the `master` branch. To match the GitHub default
+and the badges in this README:
+
+```bash
+git branch -m master main
+git remote add origin git@github.com:USER/REPO.git
+git push -u origin main
+```
+
+After the first push, enable GitHub Pages (Settings → Pages → Source: GitHub
+Actions) and add an `NCBI_API_KEY` secret if you want higher PubMed rate
+limits.
+
 ## License
 
 Code: MIT. Text and figures: CC-BY-4.0.
