@@ -1,0 +1,38 @@
+# PubMed (MEDLINE) search strategy
+# Database: PubMed via NCBI E-utilities (esearch / efetch)
+# Last manually peer-reviewed against PRESS-2015: 2026-05-05
+# Adult restriction applied at the screening stage rather than via the Adults
+# filter, because the Adults filter excludes mixed-age papers in which adult
+# strata are separately reported and extractable.
+#
+# Block 1 — Atopic dermatitis (population/exposure)
+# Block 2 — Depression
+# Block 3 — Anxiety
+# Block 4 — Suicidality / self-harm
+# Block 5 — Combined
+#
+# Use line numbers (#1, #2 ...) in PubMed History/Search Builder, then run #5.
+
+#1
+("Dermatitis, Atopic"[MeSH] OR "atopic dermatitis"[tiab] OR "atopic eczema"[tiab]
+ OR "atopic eczema"[ot] OR "eczema, atopic"[tiab] OR neurodermatitis[tiab])
+
+#2
+("Depressive Disorder"[MeSH] OR "Depression"[MeSH] OR depress*[tiab]
+ OR "PHQ-9"[tiab] OR "Patient Health Questionnaire"[tiab]
+ OR "Beck Depression Inventory"[tiab] OR "BDI"[tiab]
+ OR "CES-D"[tiab] OR "HADS"[tiab] OR "Hamilton Depression"[tiab])
+
+#3
+("Anxiety Disorders"[MeSH] OR "Anxiety"[MeSH] OR anxi*[tiab]
+ OR "GAD-7"[tiab] OR "Generalized Anxiety Disorder"[tiab]
+ OR "State-Trait Anxiety"[tiab] OR "STAI"[tiab])
+
+#4
+("Suicide"[MeSH] OR "Suicidal Ideation"[MeSH] OR "Self-Injurious Behavior"[MeSH]
+ OR suicid*[tiab] OR "self-harm"[tiab] OR "self harm"[tiab]
+ OR "self-injur*"[tiab] OR "deliberate self"[tiab]
+ OR "C-SSRS"[tiab] OR "Columbia Suicide Severity"[tiab])
+
+#5
+#1 AND (#2 OR #3 OR #4) NOT (animals[mh] NOT humans[mh])

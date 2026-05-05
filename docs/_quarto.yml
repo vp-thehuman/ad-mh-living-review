@@ -1,0 +1,47 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+
+website:
+  title: "AD × Mental Health — Living Review"
+  description: >
+    Living systematic review and random-effects meta-analysis of the
+    association between atopic dermatitis and depression, anxiety, and
+    suicidality / self-harm in adults.
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: methods.qmd
+        text: Methods
+      - href: results.qmd
+        text: Results
+      - href: forest_plots.qmd
+        text: Forest plots
+      - href: grade_summary.qmd
+        text: GRADE
+    right:
+      - icon: github
+        href: https://github.com/USER/REPO
+  page-footer:
+    center: |
+      Released under MIT (code) and CC-BY-4.0 (text/figures).
+      Last updated {{< meta last-updated >}}.
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-tools: false
+    smooth-scroll: true
+    page-layout: full
+    fig-width: 9
+    fig-height: 6
+    citations-hover: true
+    crossrefs-hover: true
+
+bibliography: references.bib
+csl: https://www.zotero.org/styles/vancouver

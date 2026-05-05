@@ -1,0 +1,41 @@
+Package: adMhLivingReview
+Title: Living Systematic Review and Meta-Analysis of Atopic Dermatitis and
+    Mental-Health Outcomes in Adults
+Version: 0.1.0
+Authors@R:
+    person("Review", "Team", email = "vishish123@gmail.com",
+           role = c("aut", "cre"))
+Description: Reproducible analysis pipeline for a PROSPERO-registered living
+    systematic review of the association between atopic dermatitis and
+    depression, anxiety, and suicidality / self-harm in adults. Uses metafor
+    for random-effects meta-analysis, subgroup analysis, leave-one-out and
+    influence diagnostics, Egger and trim-and-fill publication-bias checks,
+    and a programmatic GRADE draft. Renders a Quarto site re-deployed monthly
+    via GitHub Actions.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 4.3.0)
+Imports:
+    metafor (>= 4.4-0),
+    dplyr,
+    tidyr,
+    readr,
+    stringr,
+    purrr,
+    ggplot2,
+    knitr,
+    yaml,
+    jsonlite,
+    fs,
+    tibble,
+    rentrez,
+    xml2,
+    revtools,
+    here
+Suggests:
+    quarto,
+    robvis,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

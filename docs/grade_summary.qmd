@@ -1,0 +1,32 @@
+---
+title: "Summary of findings (GRADE — draft)"
+---
+
+```{r}
+#| echo: false
+#| message: false
+suppressPackageStartupMessages({
+  library(dplyr); library(readr); library(knitr)
+})
+gen <- "_generated"
+grade  <- read_csv(file.path(gen, "grade_draft.csv"),  show_col_types = FALSE)
+pooled <- read_csv(file.path(gen, "pooled_summary.csv"), show_col_types = FALSE)
+sof <- pooled |>
+  inner_join(grade |> select(outcome, certainty), by = "outcome") |>
+  transmute(
+    Outcome = stringr::str_to_title(outcome),
+    `k (studies)` = k,
+    `Pooled OR (95% CI)` = sprintf("%.2f (%.2f – %.2f)", pooled_OR, ci_lo, ci_hi),
+    `I²` = sprintf("%.0f%%", I2),
+    Certainty = certainty)
+kable(sof)
+```
+
+The certainty column is a *mechanical draft* derived from the rules pre-specified
+in `protocol/PRISMA-P_protocol.md` §15c and the GRADE handbook (Schünemann et
+al., 2013). The review team finalises each judgement after explicit discussion
+of indirectness — which the rule engine does not assess automatically — and
+any plausible-confounding upgrade considerations.
+
+A full domain-by-domain rationale is recorded in `data/grade.csv` once
+finalised.

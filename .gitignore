@@ -1,0 +1,26 @@
+# R
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+renv/library/
+renv/python/
+renv/staging/
+renv/local/
+
+# Quarto
+docs/_site/
+docs/.quarto/
+docs/_freeze/
+docs/_generated/
+*.quarto_ipynb
+
+# Generated artefacts (CSV/RDS) — keep raw_records and screening_log under
+# version control as audit trail; ignore everything else under data/ that's
+# auto-derived.
+docs/figures/forest_*.png
+docs/figures/funnel_*.png
+
+# OS
+.DS_Store
+Thumbs.db

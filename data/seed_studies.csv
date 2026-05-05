@@ -1,0 +1,13 @@
+study_id,first_author,year,country,region,design,setting,n_ad,n_control,mean_age,pct_female,ad_definition,ad_severity_mix,outcome,outcome_ascertainment,incident_or_prevalent,effect_type,effect_estimate,ci_lower,ci_upper,covariates_adjusted,funding,rob_overall,notes
+SEED01,Andersen,2020,Denmark,Europe,cohort_retrospective,registry,8420,84200,46.1,55.4,ICD10_L20,mixed,depression,registry,incident,OR,1.42,1.30,1.55,age+sex+ses+atopy,public,Some_concerns,SYNTHETIC SEED — do not cite
+SEED02,Brown,2021,UK,Europe,cohort_prospective,primary_care,15230,76150,52.7,57.1,read_codes,mixed,depression,registry,incident,OR,1.31,1.21,1.42,age+sex+smoking+bmi+ses,public,Low,SYNTHETIC SEED — do not cite
+SEED03,Chen,2019,Taiwan,Asia,cohort_retrospective,registry,12010,48040,41.5,52.0,ICD9_691,mixed,depression,registry,incident,OR,1.55,1.39,1.73,age+sex+income+atopy,public,Some_concerns,SYNTHETIC SEED — do not cite
+SEED04,DeLeo,2022,USA,Americas,cross_sectional,survey,4310,42100,44.8,61.2,self_report,mild_moderate,depression,PHQ9,prevalent,OR,1.74,1.52,1.99,age+sex,public,High,SYNTHETIC SEED — do not cite
+SEED05,Eriksson,2023,Sweden,Europe,cohort_prospective,registry,9820,98200,49.2,54.8,ICD10_L20,mixed,depression,registry,incident,OR,1.36,1.24,1.49,age+sex+ses+atopy+smoking,public,Low,SYNTHETIC SEED — do not cite
+SEED06,Fujita,2021,Japan,Asia,cross_sectional,clinic,612,2040,38.4,49.5,Hanifin_Rajka,moderate_severe,depression,HADS,prevalent,OR,1.92,1.40,2.63,age+sex,industry,Some_concerns,SYNTHETIC SEED — do not cite
+SEED07,Gomez,2024,Spain,Europe,case_control,clinic,540,2160,42.1,58.7,clinical,mixed,anxiety,GAD7,prevalent,OR,1.66,1.30,2.12,age+sex,public,Some_concerns,SYNTHETIC SEED — do not cite
+SEED08,Halvorsen,2022,Norway,Europe,cohort_retrospective,registry,7290,72900,48.5,55.0,ICD10_L20,mixed,anxiety,registry,incident,OR,1.39,1.27,1.52,age+sex+ses+atopy,public,Low,SYNTHETIC SEED — do not cite
+SEED09,Iyer,2023,India,Asia,cross_sectional,clinic,420,1260,33.2,46.4,UK_working_party,mixed,anxiety,HADS,prevalent,OR,1.85,1.34,2.55,age+sex,none,High,SYNTHETIC SEED — do not cite
+SEED10,Jensen,2021,Denmark,Europe,cohort_retrospective,registry,8420,84200,46.1,55.4,ICD10_L20,mixed,suicidality,registry,incident,OR,1.39,1.20,1.61,age+sex+ses+atopy+psych_hx,public,Some_concerns,SYNTHETIC SEED — do not cite
+SEED11,Kim,2022,South_Korea,Asia,cohort_retrospective,registry,21020,84080,40.7,52.3,ICD10_L20,mixed,suicidality,registry,incident,OR,1.27,1.13,1.43,age+sex+income+atopy,public,Low,SYNTHETIC SEED — do not cite
+SEED12,Larsson,2020,Sweden,Europe,cohort_prospective,registry,9820,98200,49.2,54.8,ICD10_L20,mixed,suicidality,registry,incident,OR,1.44,1.20,1.73,age+sex+ses+atopy+smoking+psych_hx,public,Low,SYNTHETIC SEED — do not cite

@@ -1,0 +1,82 @@
+---
+title: "Results"
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+suppressPackageStartupMessages({
+  library(dplyr); library(readr); library(knitr)
+})
+gen <- "_generated"
+pooled  <- read_csv(file.path(gen, "pooled_summary.csv"), show_col_types = FALSE)
+sub     <- tryCatch(read_csv(file.path(gen, "subgroup_summary.csv"),
+                             show_col_types = FALSE),
+                    error = function(e) tibble())
+subset  <- tryCatch(read_csv(file.path(gen, "subset_summary.csv"),
+                             show_col_types = FALSE),
+                    error = function(e) tibble())
+bias    <- tryCatch(read_csv(file.path(gen, "publication_bias.csv"),
+                             show_col_types = FALSE),
+                    error = function(e) tibble())
+l1o     <- tryCatch(read_csv(file.path(gen, "leave1out.csv"),
+                             show_col_types = FALSE),
+                    error = function(e) tibble())
+```
+
+## Pooled effects
+
+```{r}
+#| echo: false
+pooled |>
+  mutate(across(c(pooled_OR, ci_lo, ci_hi, pi_lo, pi_hi),
+                ~ sprintf("%.2f", .))) |>
+  kable()
+```
+
+## Subgroup analyses
+
+```{r}
+#| echo: false
+if (nrow(sub)) kable(sub) else cat("Subgroup models not yet runnable.")
+```
+
+## Sensitivity (subset re-fits)
+
+```{r}
+#| echo: false
+if (nrow(subset)) {
+  subset |>
+    mutate(across(c(pooled_OR, ci_lo, ci_hi),
+                  ~ sprintf("%.2f", .))) |>
+    kable()
+} else {
+  cat("Subset analyses not yet runnable.")
+}
+```
+
+## Leave-one-out (depression only, illustrative)
+
+```{r}
+#| echo: false
+if (nrow(l1o)) {
+  l1o |>
+    filter(outcome == "depression") |>
+    mutate(across(c(pooled_OR, ci_lo, ci_hi, I2),
+                  ~ sprintf("%.2f", .))) |>
+    kable()
+}
+```
+
+## Publication bias
+
+```{r}
+#| echo: false
+if (nrow(bias)) kable(bias)
+```
+
+## Risk of bias summary
+
+See `data/rob.csv` (long format) and the per-outcome breakdown in the
+forthcoming `robvis` summary plot.

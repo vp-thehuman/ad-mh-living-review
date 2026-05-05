@@ -1,0 +1,42 @@
+---
+title: "Methods"
+---
+
+The full methodology is detailed in the PRISMA-P 2015 protocol
+(`protocol/PRISMA-P_protocol.md`) and the PROSPERO registration
+(`protocol/PROSPERO_registration.md`). This page summarises the highlights.
+
+## Eligibility
+
+Adults (≥18 years) with atopic dermatitis defined by Hanifin-Rajka, UK Working
+Party criteria, ICD-10 L20, or validated self-report; vs adults without AD.
+Outcomes: depression, anxiety, suicidality / self-harm — each pooled
+separately.
+
+## Searches
+
+PubMed and Embase queries (`search/pubmed_query.txt`,
+`search/embase_query.txt`) re-run monthly. Trial registers and grey-literature
+sources searched at each formal annual update. PRESS-2015 peer review on file.
+
+## Risk of bias
+
+ROBINS-E for non-randomised studies; RoB 2 for any contributing RCT. Two
+independent reviewers; consensus or third-reviewer adjudication.
+
+## Quantitative synthesis
+
+- **Random-effects** with REML τ² estimation.
+- **Hartung-Knapp-Sidik-Jonkman** confidence intervals.
+- Effect harmonised to OR; HR/RR-only studies sensitivity-tested.
+- Heterogeneity: τ², I², 95 % prediction interval.
+- **Subgroup**: age stratum, AD severity, sex, region, ascertainment, design.
+- **Meta-regression** for mean age and % female (k ≥ 10).
+- **Sensitivity**: leave-one-out, low-RoB-only, adjusted-only, incident-only,
+  OR-native-only.
+- **Publication bias**: funnel plot + Egger (k ≥ 10) + trim-and-fill.
+
+## Certainty
+
+GRADE per outcome. The pipeline produces a *draft* judgement using
+pre-specified rules; the review team finalises after discussion.

@@ -1,0 +1,34 @@
+# Embase (Ovid) search strategy
+# Platform: Ovid Embase Classic + Embase 1947 to current
+# Last manually peer-reviewed against PRESS-2015: 2026-05-05
+
+1   exp atopic dermatitis/
+2   (atopic adj2 (dermatitis or eczema)).ti,ab,kw.
+3   neurodermatitis.ti,ab,kw.
+4   1 or 2 or 3
+
+5   exp depression/
+6   exp major depression/
+7   (depress* or "PHQ-9" or "Patient Health Questionnaire" or BDI
+     or "Beck Depression" or "CES-D" or HADS or "Hamilton Depression").ti,ab,kw.
+8   5 or 6 or 7
+
+9   exp anxiety/
+10  exp anxiety disorder/
+11  (anxi* or "GAD-7" or "State-Trait Anxiety" or STAI).ti,ab,kw.
+12  9 or 10 or 11
+
+13  exp suicide/
+14  exp suicidal ideation/
+15  exp automutilation/
+16  (suicid* or "self-harm" or "self harm" or "self injur*"
+     or "deliberate self" or "C-SSRS").ti,ab,kw.
+17  13 or 14 or 15 or 16
+
+18  4 and (8 or 12 or 17)
+
+19  exp animal/ not exp human/
+20  18 not 19
+
+21  limit 20 to (conference abstract or article or article in press
+                or review or "review.ar")

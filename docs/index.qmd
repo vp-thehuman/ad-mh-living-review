@@ -1,0 +1,79 @@
+---
+title: "Atopic dermatitis and mental-health outcomes — living evidence summary"
+subtitle: "Random-effects meta-analysis, monthly-updating"
+author: "Review team (TBD)"
+date: today
+last-updated: today
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+#| warning: false
+suppressPackageStartupMessages({
+  library(dplyr); library(readr); library(knitr); library(stringr)
+})
+gen <- "_generated"
+pooled <- read_csv(file.path(gen, "pooled_summary.csv"), show_col_types = FALSE)
+grade  <- read_csv(file.path(gen, "grade_draft.csv"),  show_col_types = FALSE)
+seed_banner <- file.exists("../data/seed_studies.csv") &&
+  identical(Sys.getenv("REVIEW_DATA", "seed_studies.csv"), "seed_studies.csv")
+```
+
+::: {.callout-warning}
+**This site is currently rendered against the synthetic seed dataset.**
+All numbers below are placeholders for pipeline validation. Treat them as
+plumbing checks, not evidence.
+:::
+
+## What this is
+
+A *living* systematic review and meta-analysis of the association between
+adult atopic dermatitis (AD) and three pre-specified mental-health outcomes:
+**depression**, **anxiety**, and **suicidality / self-harm**. Pre-registered
+on PROSPERO and reported per PRISMA 2020.
+
+## Headline pooled estimates
+
+```{r}
+#| label: pooled-table
+#| echo: false
+pooled |>
+  transmute(
+    Outcome = stringr::str_to_title(outcome),
+    `k studies` = k,
+    `Pooled OR` = sprintf("%.2f", pooled_OR),
+    `95% CI` = sprintf("%.2f – %.2f", ci_lo, ci_hi),
+    `95% PI` = sprintf("%.2f – %.2f", pi_lo, pi_hi),
+    `I²` = sprintf("%.0f%%", I2),
+    `τ²` = sprintf("%.3f", tau2)) |>
+  kable(align = "lrrrrr")
+```
+
+## Certainty (draft GRADE)
+
+```{r}
+#| label: grade-table
+#| echo: false
+grade |>
+  transmute(
+    Outcome = stringr::str_to_title(outcome),
+    Starting = starting,
+    `Down: RoB` = rob_downgrade,
+    `Down: Heterogeneity` = inconsistency_downgrade,
+    `Down: Imprecision` = imprecision_downgrade,
+    `Down: Pub bias` = pubbias_downgrade,
+    `Up: large effect` = upgrade_large_effect,
+    Certainty = certainty) |>
+  kable(align = "llrrrrrl")
+```
+
+## How this updates
+
+A scheduled GitHub Action re-runs the PubMed and Embase queries on the **1st
+of every month** (UTC), deduplicates against the corpus, opens a screening
+issue for any new candidate records, and — once the team merges newly
+extracted rows — re-pools the meta-analyses and re-renders this site.
+
+The full audit trail lives in `search/update_log.md`.
