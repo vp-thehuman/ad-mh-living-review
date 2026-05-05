@@ -4,7 +4,7 @@
 
 suppressPackageStartupMessages({
   required <- c("metafor", "dplyr", "tidyr", "readr", "stringr", "purrr",
-                "ggplot2", "knitr", "yaml", "jsonlite", "fs")
+                "ggplot2", "yaml", "jsonlite", "fs")
   missing  <- setdiff(required, rownames(installed.packages()))
   if (length(missing)) {
     install.packages(missing, repos = "https://cloud.r-project.org")

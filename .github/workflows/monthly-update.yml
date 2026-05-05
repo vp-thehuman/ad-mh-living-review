@@ -2,7 +2,6 @@ name: Monthly living update
 
 on:
   schedule:
-    # 06:30 UTC on the 1st of every month
     - cron: "30 6 1 * *"
   workflow_dispatch:
     inputs:
@@ -28,23 +27,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup R
-        uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: "4.4.1"
           use-public-rspm: true
 
-      - name: Cache R packages
-        uses: actions/cache@v4
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          path: ~/.cache/R/renv
-          key: ${{ runner.os }}-renv-${{ hashFiles('renv.lock') }}
-          restore-keys: ${{ runner.os }}-renv-
-
-      - name: Install renv & restore
-        run: |
-          Rscript -e 'install.packages("renv", repos = "https://cloud.r-project.org")'
-          Rscript -e 'renv::restore(prompt = FALSE)'
+          packages: |
+            any::metafor
+            any::dplyr
+            any::tidyr
+            any::readr
+            any::stringr
+            any::purrr
+            any::ggplot2
+            any::knitr
+            any::yaml
+            any::jsonlite
+            any::fs
+            any::tibble
+            any::rentrez
+            any::xml2
+            any::rmarkdown
 
       - name: Run search
         env:
@@ -55,16 +60,11 @@ jobs:
         run: Rscript R/02_screen.R
 
       - id: summarise
-        name: Summarise output for issue
         run: |
           run_date=$(date -u +%F)
           echo "run_date=$run_date" >> "$GITHUB_OUTPUT"
           q="data/screening_queue_${run_date}.csv"
-          if [[ -f "$q" ]]; then
-            n=$(($(wc -l < "$q") - 1))
-          else
-            n=0
-          fi
+          if [[ -f "$q" ]]; then n=$(($(wc -l < "$q") - 1)); else n=0; fi
           echo "new_records=$n" >> "$GITHUB_OUTPUT"
           echo "## Update — $run_date" >> "$GITHUB_STEP_SUMMARY"
           echo "* New candidate records: $n" >> "$GITHUB_STEP_SUMMARY"
@@ -74,10 +74,10 @@ jobs:
           git config user.name  "living-review-bot"
           git config user.email "living-review-bot@users.noreply.github.com"
           git add data/raw_records_*.csv data/screening_log.csv \
-                  data/screening_queue_*.csv search/update_log.md
+                  data/screening_queue_*.csv search/update_log.md 2>/dev/null || true
           git commit -m "search: monthly update ${{ steps.summarise.outputs.run_date }}" || \
-            echo "no changes"
-          git push
+            echo "no changes to commit"
+          git push || echo "nothing to push"
 
       - name: Open screening issue
         if: ${{ steps.summarise.outputs.new_records != '0' }}
@@ -106,28 +106,34 @@ jobs:
     name: Re-pool & render site
     needs: refresh-corpus
     runs-on: ubuntu-latest
-    # Run if extracted.csv exists OR the seed dataset is in use OR the file
-    # changed in this push.
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
-      - name: Setup R
-        uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: "4.4.1"
           use-public-rspm: true
 
-      - name: Cache R packages
-        uses: actions/cache@v4
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          path: ~/.cache/R/renv
-          key: ${{ runner.os }}-renv-${{ hashFiles('renv.lock') }}
-          restore-keys: ${{ runner.os }}-renv-
-
-      - name: Install renv & restore
-        run: |
-          Rscript -e 'install.packages("renv", repos = "https://cloud.r-project.org")'
-          Rscript -e 'renv::restore(prompt = FALSE)'
+          packages: |
+            any::metafor
+            any::dplyr
+            any::tidyr
+            any::readr
+            any::stringr
+            any::purrr
+            any::ggplot2
+            any::knitr
+            any::yaml
+            any::jsonlite
+            any::fs
+            any::tibble
+            any::rentrez
+            any::xml2
+            any::rmarkdown
 
       - name: Run pipeline
         env:
@@ -140,14 +146,12 @@ jobs:
           Rscript R/07_publication_bias.R
           Rscript R/08_grade.R
 
-      - name: Setup Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
+      - uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Render Quarto site
         run: quarto render docs/
 
-      - name: Upload artefact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: docs/_site
 
@@ -161,8 +165,8 @@ jobs:
           git config user.name  "living-review-bot"
           git config user.email "living-review-bot@users.noreply.github.com"
           tag="lr-$(date -u +%Y%m%d)"
-          git tag -a "$tag" -m "Material update: pooled OR moved by >10% in ≥ 1 outcome"
-          git push origin "$tag"
+          git tag -a "$tag" -m "Material update: pooled OR moved by >10% in >= 1 outcome" || true
+          git push origin "$tag" || true
 
   publish:
     name: Deploy to GitHub Pages
