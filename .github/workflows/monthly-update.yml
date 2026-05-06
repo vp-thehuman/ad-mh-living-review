@@ -13,16 +13,15 @@ on:
 permissions:
   contents: write
   issues: write
-  pages: write
-  id-token: write
+  pull-requests: write
 
 jobs:
   refresh-corpus:
     name: Re-search & stage screening queue
     runs-on: ubuntu-latest
     outputs:
-      new_records: ${{ steps.summarise.outputs.new_records }}
       run_date:    ${{ steps.summarise.outputs.run_date }}
+      new_records: ${{ steps.summarise.outputs.new_records }}
 
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +29,7 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: "4.4.1"
-          
+          use-public-rspm: true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -50,6 +49,8 @@ jobs:
             any::rentrez
             any::xml2
             any::rmarkdown
+            any::httr2
+            any::pdftools
 
       - name: Run search
         env:
@@ -66,8 +67,8 @@ jobs:
           q="data/screening_queue_${run_date}.csv"
           if [[ -f "$q" ]]; then n=$(($(wc -l < "$q") - 1)); else n=0; fi
           echo "new_records=$n" >> "$GITHUB_OUTPUT"
-          echo "## Update — $run_date" >> "$GITHUB_STEP_SUMMARY"
-          echo "* New candidate records: $n" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Search update — $run_date" >> "$GITHUB_STEP_SUMMARY"
+          echo "* New candidate records: $n"   >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit search artefacts
         run: |
@@ -79,42 +80,22 @@ jobs:
             echo "no changes to commit"
           git push || echo "nothing to push"
 
-      - name: Open screening issue
-        if: ${{ steps.summarise.outputs.new_records != '0' }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const n = "${{ steps.summarise.outputs.new_records }}";
-            const d = "${{ steps.summarise.outputs.run_date }}";
-            await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo:  context.repo.repo,
-              title: `Screening queue — ${d} (${n} new)`,
-              body: [
-                `Automated monthly update has staged **${n}** new candidate records.`,
-                ``,
-                `1. Pull \`data/screening_queue_${d}.csv\` into Rayyan.`,
-                `2. Two reviewers screen independently.`,
-                `3. Reconcile; update \`data/screening_log.csv\` with final decisions.`,
-                `4. Extract any newly-included studies into \`data/extracted.csv\`.`,
-                `5. Push — the re-analysis job re-pools and re-renders the site.`,
-              ].join("\n"),
-              labels: ["living-update", "screening"]
-            });
-
-  re-analyse:
-    name: Re-pool & render site
+  ai-batch:
+    name: AI screen + fetch + extract → open PR
     needs: refresh-corpus
     runs-on: ubuntu-latest
+    if: ${{ needs.refresh-corpus.outputs.new_records != '0' }}
+
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
 
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: "4.4.1"
-          
+          use-public-rspm: true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -134,47 +115,67 @@ jobs:
             any::rentrez
             any::xml2
             any::rmarkdown
+            any::httr2
+            any::pdftools
 
-      - name: Run pipeline
+      - name: AI title/abstract screen
         env:
-          REVIEW_DATA: ${{ vars.REVIEW_DATA != '' && vars.REVIEW_DATA || 'seed_studies.csv' }}
-        run: |
-          Rscript R/03_extract.R
-          Rscript R/04_meta_analysis.R
-          Rscript R/05_subgroups.R
-          Rscript R/06_sensitivity.R
-          Rscript R/07_publication_bias.R
-          Rscript R/08_grade.R
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: Rscript R/02b_ai_screen.R
 
-      - uses: quarto-dev/quarto-actions/setup@v2
+      - name: Fetch open-access full text
+        env:
+          UNPAYWALL_EMAIL: ${{ secrets.UNPAYWALL_EMAIL }}
+        run: Rscript R/03a_fetch_fulltext.R
 
-      - name: Render Quarto site
-        run: quarto render docs/
+      - name: AI extract + draft ROBINS-E
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: Rscript R/03b_ai_extract.R
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Open PR with AI batch
+        uses: peter-evans/create-pull-request@v6
         with:
-          path: docs/_site
+          branch: ai-batch/${{ needs.refresh-corpus.outputs.run_date }}
+          base: main
+          title: "AI batch — ${{ needs.refresh-corpus.outputs.run_date }}"
+          commit-message: "AI batch: screen + fetch + extract for ${{ needs.refresh-corpus.outputs.run_date }}"
+          author: "living-review-bot <living-review-bot@users.noreply.github.com>"
+          committer: "living-review-bot <living-review-bot@users.noreply.github.com>"
+          delete-branch: true
+          add-paths: |
+            data/screening_queue_*_ai.csv
+            data/fulltext_log_*.csv
+            data/fulltext/**
+            data/ai_extracted_*.csv
+            data/extracted.csv
+          body: |
+            **Automated AI batch for ${{ needs.refresh-corpus.outputs.run_date }}**
 
-      - name: Compare pooled estimates against last release
-        id: drift
-        run: Rscript R/_drift_check.R
+            This PR contains the AI second-screener verdicts, the open-access
+            full texts that were fetchable, and Claude Haiku 4.5's draft
+            extractions + ROBINS-E ratings for the new records.
 
-      - name: Tag material update
-        if: ${{ steps.drift.outputs.material == 'true' }}
-        run: |
-          git config user.name  "living-review-bot"
-          git config user.email "living-review-bot@users.noreply.github.com"
-          tag="lr-$(date -u +%Y%m%d)"
-          git tag -a "$tag" -m "Material update: pooled OR moved by >10% in >= 1 outcome" || true
-          git push origin "$tag" || true
+            ### Your review checklist
 
-  publish:
-    name: Deploy to GitHub Pages
-    needs: re-analyse
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - id: deploy
-        uses: actions/deploy-pages@v4
+            - [ ] Open `data/screening_queue_*_ai.csv` and skim the `ai_decision`
+                  + `ai_reason` columns. Confirm or override the includes/unsures.
+                  Spot-check ~20 % of the excludes.
+            - [ ] Open `data/fulltext_log_*.csv`. For records with
+                  `fetch_status = not_fetched`, drop the PDF into
+                  `data/fulltext/<pmid>.pdf` if you have institutional access,
+                  then re-run the workflow once.
+            - [ ] Open the **diff of `data/extracted.csv`** in this PR. Each new
+                  row has `ai_verbatim_quote` (the exact sentence Claude pulled
+                  the effect estimate from) and `ai_confidence`. For each row,
+                  click the linked PDF and verify the verbatim quote against the
+                  paper's text. Edit the row inline in the GitHub UI if needed.
+            - [ ] Confirm the `rob_overall` column on each new row, with the
+                  `ai_rob_rationale` audit field.
+
+            When the diff looks right, **Squash and merge** this PR. The
+            `re-render` workflow will fire on the merge commit and rebuild the
+            live site within a few minutes.
+
+            Cost on this batch: ≈ \$0.01 per AI-screened record + ≈ \$0.02 per
+            full-text extraction. Audit log: `data/ai_extracted_*.csv`.

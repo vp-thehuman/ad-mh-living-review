@@ -1,0 +1,94 @@
+name: Re-pool & render site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/extracted.csv"
+      - "data/seed_studies.csv"
+      - "data/rob.csv"
+      - "docs/**"
+      - "R/03_extract.R"
+      - "R/04_meta_analysis.R"
+      - "R/05_subgroups.R"
+      - "R/06_sensitivity.R"
+      - "R/07_publication_bias.R"
+      - "R/08_grade.R"
+      - "R/_drift_check.R"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  re-analyse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main }
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.4.1"
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::metafor
+            any::dplyr
+            any::tidyr
+            any::readr
+            any::stringr
+            any::purrr
+            any::ggplot2
+            any::knitr
+            any::yaml
+            any::jsonlite
+            any::fs
+            any::tibble
+            any::rmarkdown
+
+      - name: Run pipeline
+        env:
+          REVIEW_DATA: ${{ vars.REVIEW_DATA != '' && vars.REVIEW_DATA || 'seed_studies.csv' }}
+        run: |
+          Rscript R/03_extract.R
+          Rscript R/04_meta_analysis.R
+          Rscript R/05_subgroups.R
+          Rscript R/06_sensitivity.R
+          Rscript R/07_publication_bias.R
+          Rscript R/08_grade.R
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - run: quarto render docs/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_site
+
+      - name: Drift check
+        id: drift
+        run: Rscript R/_drift_check.R
+
+      - name: Tag material update
+        if: ${{ steps.drift.outputs.material == 'true' }}
+        run: |
+          git config user.name  "living-review-bot"
+          git config user.email "living-review-bot@users.noreply.github.com"
+          tag="lr-$(date -u +%Y%m%d)"
+          git tag -a "$tag" -m "Material update: pooled OR moved by >10% in >= 1 outcome" || true
+          git push origin "$tag" || true
+
+  publish:
+    needs: re-analyse
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

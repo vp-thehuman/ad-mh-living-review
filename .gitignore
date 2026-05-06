@@ -24,3 +24,9 @@ docs/figures/funnel_*.png
 # OS
 .DS_Store
 Thumbs.db
+
+# Full-text PDFs are kept locally during a workflow run but not committed
+# (often paywalled or large). Audit log + extracted JSON live in CSVs.
+data/fulltext/*.pdf
+data/fulltext/*.xml
+!data/fulltext/.gitkeep
