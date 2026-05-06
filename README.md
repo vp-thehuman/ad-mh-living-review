@@ -2,7 +2,6 @@
 
 > **Design:** rapid review (Cochrane RR Methods Group; PRISMA-RR 2024). Single-reviewer with intra-rater reliability validation. See `protocol/PRISMA-P_protocol.md`.
 
-[![Monthly Update](https://github.com/USER/REPO/actions/workflows/monthly-update.yml/badge.svg)](https://github.com/USER/REPO/actions/workflows/monthly-update.yml)
 [![Quarto Site](https://img.shields.io/badge/site-quarto-blue)](https://USER.github.io/REPO/)
 [![PROSPERO](https://img.shields.io/badge/PROSPERO-pending-lightgrey)](https://www.crd.york.ac.uk/prospero/)
 
