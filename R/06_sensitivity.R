@@ -24,7 +24,7 @@ readr::write_csv(l1o, file.path(cfg$out_dir, "leave1out.csv"))
 
 # Influence diagnostics -------------------------------------------------------
 infl <- purrr::imap(fits, function(m, o) {
-  inf <- metafor::influence(m)
+  inf <- influence(m)
   tibble::tibble(
     outcome   = o,
     study     = m$slab,
