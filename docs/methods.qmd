@@ -2,41 +2,52 @@
 title: "Methods"
 ---
 
-The full methodology is detailed in the PRISMA-P 2015 protocol
-(`protocol/PRISMA-P_protocol.md`) and the PROSPERO registration
-(`protocol/PROSPERO_registration.md`). This page summarises the highlights.
+This is a **rapid living review** following the Cochrane Rapid Reviews
+Methods Group (Garritty et al. 2021) and reported per **PRISMA-RR**
+(Stevens et al. 2024). Pre-registered on PROSPERO. Full protocol:
+`protocol/PRISMA-P_protocol.md`.
 
 ## Eligibility
 
-Adults (≥18 years) with atopic dermatitis defined by Hanifin-Rajka, UK Working
-Party criteria, ICD-10 L20, or validated self-report; vs adults without AD.
-Outcomes: depression, anxiety, suicidality / self-harm — each pooled
-separately.
+Adults (≥ 18 years) with atopic dermatitis defined by Hanifin-Rajka, UK
+Working Party criteria, ICD-10 L20, or validated self-report; vs adults
+without AD. Outcomes: depression, anxiety, suicidality / self-harm —
+pooled separately.
 
 ## Searches
 
 PubMed and Embase queries (`search/pubmed_query.txt`,
-`search/embase_query.txt`) re-run monthly. Trial registers and grey-literature
-sources searched at each formal annual update. PRESS-2015 peer review on file.
+`search/embase_query.txt`) re-run monthly via GitHub Actions. Cochrane
+CENTRAL and reference-list hand-searches of all included studies.
+PsycINFO and grey literature limited to the top three most-cited reviews
+(rapid-review streamline). PRESS-2015 peer review on file.
 
-## Risk of bias
+## Rapid-review streamlining
 
-ROBINS-E for non-randomised studies; RoB 2 for any contributing RCT. Two
-independent reviewers; consensus or third-reviewer adjudication.
+| Step | This review | Mitigation |
+|---|---|---|
+| Title/abstract screen | One reviewer | 20% re-screened by same reviewer after ≥ 14-day washout; intra-rater κ reported |
+| Full text | One reviewer | 10% re-screened after washout |
+| Extraction | One reviewer | Self-verification against PDF for high-risk items after ≥ 7-day washout |
+| Risk of bias | One reviewer (ROBINS-E / RoB 2) | 20% re-rated after washout |
+
+Calibration: 50-record pilot screened twice by the reviewer with ≥ 14-day
+washout; intra-rater κ ≥ 0.8 required to begin formal screening.
 
 ## Quantitative synthesis
 
-- **Random-effects** with REML τ² estimation.
-- **Hartung-Knapp-Sidik-Jonkman** confidence intervals.
+- Random-effects with REML τ²; Hartung-Knapp-Sidik-Jonkman CIs.
 - Effect harmonised to OR; HR/RR-only studies sensitivity-tested.
-- Heterogeneity: τ², I², 95 % prediction interval.
-- **Subgroup**: age stratum, AD severity, sex, region, ascertainment, design.
-- **Meta-regression** for mean age and % female (k ≥ 10).
-- **Sensitivity**: leave-one-out, low-RoB-only, adjusted-only, incident-only,
+- Heterogeneity via τ², I², 95% prediction interval.
+- Pre-specified subgroups: age stratum, AD severity, sex, region,
+  ascertainment, study design.
+- Meta-regression on mean age and % female (k ≥ 10).
+- Sensitivity: leave-one-out, low-RoB-only, adjusted-only, incident-only,
   OR-native-only.
-- **Publication bias**: funnel plot + Egger (k ≥ 10) + trim-and-fill.
+- Publication bias: funnel plot + Egger (k ≥ 10) + trim-and-fill.
 
 ## Certainty
 
-GRADE per outcome. The pipeline produces a *draft* judgement using
-pre-specified rules; the review team finalises after discussion.
+GRADE per outcome. The mechanical draft contributes **one downgrade for
+the rapid-review single-reviewer design** unless intra-rater validation
+κ ≥ 0.8, in which case the downgrade is dropped (Garritty 2024 GRADE-rapid).
