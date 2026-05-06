@@ -6,7 +6,7 @@
 [![Quarto Site](https://img.shields.io/badge/site-quarto-blue)](https://USER.github.io/REPO/)
 [![PROSPERO](https://img.shields.io/badge/PROSPERO-pending-lightgrey)](https://www.crd.york.ac.uk/prospero/)
 
-A **living** systematic review and random-effects meta-analysis of the association between atopic dermatitis (AD) and mental-health outcomes (depression, anxiety, suicidality / self-harm) in adults (≥18 y).
+A **living** rapid review and random-effects meta-analysis of the association between atopic dermatitis (AD) and mental-health outcomes (depression, anxiety, suicidality / self-harm) in adults (≥18 y).
 
 The pipeline re-runs **every month** via GitHub Actions: it re-executes the PubMed and Embase queries, deduplicates against the corpus, flags new records for screening, re-fits the meta-analytic models when new eligible studies are admitted, and re-renders the Quarto site.
 
